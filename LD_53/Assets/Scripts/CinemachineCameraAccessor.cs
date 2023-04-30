@@ -1,4 +1,5 @@
 using Cinemachine;
+using lvl_0;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,6 +18,11 @@ public class CinemachineCameraAccessor : MonoBehaviour
             Destroy(Instance);
         }
         Instance = this;
+    }
+
+    private void OnEnable()
+    {
+        GameManager.Instance.GameSceneLoaded();
     }
 
     public CinemachineVirtualCamera GetCamera()

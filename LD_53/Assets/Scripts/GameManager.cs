@@ -32,7 +32,7 @@ namespace lvl_0
 
         private PlayerController m_currentPlayer;
 
-        private GameState m_gameState;
+        public GameState m_gameState;
 
         private Duration m_gameOverDuration;
         private Duration m_gameStartDuration;
@@ -68,9 +68,20 @@ namespace lvl_0
             }
         }
 
+        public void LeaveInstructions()
+        {
+            ChangeState(GameState.Menu);
+            SceneManager.LoadScene(0);
+        }
+
+        public void EnterInstructions()
+        {
+            ChangeState(GameState.Instructions);
+            SceneManager.LoadScene(1);
+        }
+
         public void StartGame()
         {
-            SceneManager.sceneLoaded += OnGameSceneLoaded;
             SceneManager.LoadScene(2);    
         }
 
@@ -78,10 +89,11 @@ namespace lvl_0
         {
             if (Instance != null && Instance != this)
             {
-                Destroy(gameObject);
+                Destroy(this.gameObject);
+                return;
             }
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(this);
 
             m_gameState = GameState.Menu;
             m_gameOverDuration = new Duration(m_gameOverWaitDuration);
@@ -168,6 +180,9 @@ namespace lvl_0
                     SceneManager.LoadScene(3);
                     m_scoreDisplayDuration.Reset();
                     break;
+                case GameState.Menu:
+                    SceneManager.LoadScene(0);
+                    break;
             }
             m_gameState = newState;
         }
@@ -178,9 +193,8 @@ namespace lvl_0
             ChangeState(GameState.GameOver);
         }
 
-        private void OnGameSceneLoaded(Scene scene, LoadSceneMode loadMode)
+        public void GameSceneLoaded()
         {
-            SceneManager.sceneLoaded -= OnGameSceneLoaded;
             ChangeState(GameState.GameStart);
         }
     }

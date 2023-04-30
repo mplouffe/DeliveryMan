@@ -82,7 +82,7 @@ namespace lvl_0
                         GameManager.Instance.StartGame();
                         break;
                     case MenuItem.Instructions:
-                        SceneManager.LoadScene(1);
+                        GameManager.Instance.EnterInstructions();
                         break;
                     case MenuItem.Quit:
                         Application.Quit();

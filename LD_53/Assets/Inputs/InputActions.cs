@@ -343,6 +343,45 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Instructions"",
+            ""id"": ""2cadc2ea-c08f-4f7e-b1b1-5620f0753b58"",
+            ""actions"": [
+                {
+                    ""name"": ""Back"",
+                    ""type"": ""Button"",
+                    ""id"": ""6861fdd6-76e3-4ea0-8244-12dc376d45a7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""8658c2c8-5a38-4524-bf88-c2a2752870a6"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Back"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""231c786a-1aa0-40cc-8187-1660982d1c4a"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Back"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -358,6 +397,9 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         m_Menu_Move = m_Menu.FindAction("Move", throwIfNotFound: true);
         m_Menu_Select = m_Menu.FindAction("Select", throwIfNotFound: true);
         m_Menu_Escape = m_Menu.FindAction("Escape", throwIfNotFound: true);
+        // Instructions
+        m_Instructions = asset.FindActionMap("Instructions", throwIfNotFound: true);
+        m_Instructions_Back = m_Instructions.FindAction("Back", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -519,6 +561,39 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         }
     }
     public MenuActions @Menu => new MenuActions(this);
+
+    // Instructions
+    private readonly InputActionMap m_Instructions;
+    private IInstructionsActions m_InstructionsActionsCallbackInterface;
+    private readonly InputAction m_Instructions_Back;
+    public struct InstructionsActions
+    {
+        private @InputActions m_Wrapper;
+        public InstructionsActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Back => m_Wrapper.m_Instructions_Back;
+        public InputActionMap Get() { return m_Wrapper.m_Instructions; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(InstructionsActions set) { return set.Get(); }
+        public void SetCallbacks(IInstructionsActions instance)
+        {
+            if (m_Wrapper.m_InstructionsActionsCallbackInterface != null)
+            {
+                @Back.started -= m_Wrapper.m_InstructionsActionsCallbackInterface.OnBack;
+                @Back.performed -= m_Wrapper.m_InstructionsActionsCallbackInterface.OnBack;
+                @Back.canceled -= m_Wrapper.m_InstructionsActionsCallbackInterface.OnBack;
+            }
+            m_Wrapper.m_InstructionsActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Back.started += instance.OnBack;
+                @Back.performed += instance.OnBack;
+                @Back.canceled += instance.OnBack;
+            }
+        }
+    }
+    public InstructionsActions @Instructions => new InstructionsActions(this);
     public interface IGameActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -531,5 +606,9 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnSelect(InputAction.CallbackContext context);
         void OnEscape(InputAction.CallbackContext context);
+    }
+    public interface IInstructionsActions
+    {
+        void OnBack(InputAction.CallbackContext context);
     }
 }
