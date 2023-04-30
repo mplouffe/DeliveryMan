@@ -13,7 +13,7 @@ namespace lvl_0
         public static GameManager Instance;
 
         [SerializeField]
-        private PlayerController m_playerPrefab;
+        private DeliveryController m_playerPrefab;
 
         [SerializeField]
         private Vector3 m_playerStartingPosition;
@@ -30,13 +30,16 @@ namespace lvl_0
         [SerializeField]
         private float m_scoreDisplayWaitDuration;
 
-        private PlayerController m_currentPlayer;
+        private DeliveryController m_currentPlayer;
 
         public GameState m_gameState;
 
         private Duration m_gameOverDuration;
         private Duration m_gameStartDuration;
         private Duration m_scoreDisplayDuration;
+
+        private int m_playerScore;
+        private int m_playerDistance;
 
         public bool GameIsRunning { get { return m_gameState == GameState.GameRunning; } }
 
@@ -163,6 +166,8 @@ namespace lvl_0
                         case GameState.GameStart:
                             PopupsManager.Instance.GetReady(false);
                             Clock.Instance.StartClock();
+                            Point startingPoint = DeliveryPointsManager.Instance.GetRandomStartingPoint();
+                            m_currentPlayer.SetTarget(startingPoint);
                             break;
                         case GameState.Escaped:
                             PopupsManager.Instance.Escaped(false);
@@ -187,6 +192,11 @@ namespace lvl_0
             m_gameState = newState;
         }
 
+        public void AssignStartPoint(Point startingPoint)
+        {
+            m_currentPlayer.SetTarget(startingPoint);
+        }
+
         private void OnClockElapsed()
         {
             Clock.Instance.OnClockElapsed -= OnClockElapsed;
@@ -196,6 +206,21 @@ namespace lvl_0
         public void GameSceneLoaded()
         {
             ChangeState(GameState.GameStart);
+        }
+
+        public void SetScore(int points)
+        {
+            m_playerScore = points;
+        }
+
+        public void SetDistance(int distance)
+        {
+            m_playerDistance = distance;
+        }
+
+        public PlayerSide GetPlayerSide(float targetX)
+        {
+            return targetX < m_currentPlayer.transform.position.x ? PlayerSide.Right : PlayerSide.Left;
         }
     }
 

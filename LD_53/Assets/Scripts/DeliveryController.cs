@@ -24,13 +24,18 @@ public class DeliveryController : MonoBehaviour
         }
     }
 
+    public void SetTarget(Point targetPoint)
+    {
+        m_targetPoint = targetPoint;
+    }
+
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.layer == 8)
         {
             var point = collision.gameObject.GetComponent<Point>();
-
+            m_targetPoint = point.PointReached();
         }
     }
 }

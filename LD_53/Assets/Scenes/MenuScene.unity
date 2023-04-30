@@ -426,7 +426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2494b0fc50669c747827bf002f3eb0e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_playerPrefab: {fileID: 7743773476438017425, guid: bdb9dac6b52ad314ab9c4e75f8cc3694, type: 3}
+  m_playerPrefab: {fileID: 9180683121036847633, guid: bdb9dac6b52ad314ab9c4e75f8cc3694, type: 3}
   m_playerStartingPosition: {x: 0, y: 0, z: 0}
   m_startingDeliveryDuration: 30
   m_gameOverWaitDuration: 3
@@ -505,7 +505,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 5d9a7e5e038abc7458bf7deeb7e39078, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
