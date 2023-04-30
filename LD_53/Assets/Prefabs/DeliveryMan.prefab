@@ -34,7 +34,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7743773476438017429
 SpriteRenderer:
@@ -187,10 +187,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0d58634669508e4fb20e90ba0e67b2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_movementSpeed: 4
+  m_movementSpeed: 5
   m_movementDeadSpot: 0.2
   m_accelerationTimeGrounded: 0.1
-  m_jumpHeight: 2
-  m_timeToJumpApex: 0.3
+  m_jumpHeight: 3
+  m_timeToJumpApex: 0.5
   m_accelerationTimeAirborne: 0.3
   m_climbingSpeed: 1

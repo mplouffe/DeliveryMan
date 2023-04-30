@@ -40,29 +40,28 @@ public class Controller2D : RaycastController
         float directionY = Mathf.Sign(velocity.y);
         float rayLength = Mathf.Abs(velocity.y) + skinWidth;
 
-        if (directionY < 0)
+
+        for (int i = 0; i < verticalRayCount; i++)
         {
-            for (int i = 0; i < verticalRayCount; i++)
+            Vector2 rayOrigin = (directionY == -1) ? raycastOrigins.bottomLeft : raycastOrigins.topLeft;
+            rayOrigin += Vector2.right * (verticalRaySpacing * i + velocity.x);
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, collisionMask);
+            // Debug.DrawRay(rayOrigin, Vector2.up * directionY * rayLength, Color.red);
+
+            if (hit)
             {
-                Vector2 rayOrigin = (directionY == -1) ? raycastOrigins.bottomLeft : raycastOrigins.topLeft;
-                rayOrigin += Vector2.right * (verticalRaySpacing * i + velocity.x);
-                RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, collisionMask);
-                // Debug.DrawRay(rayOrigin, Vector2.up * directionY * rayLength, Color.red);
+                velocity.y = (hit.distance - skinWidth) * directionY;
+                rayLength = hit.distance;
 
-                if (hit)
+                if (collisions.climbingSlope)
                 {
-                    velocity.y = (hit.distance - skinWidth) * directionY;
-                    rayLength = hit.distance;
-
-                    if (collisions.climbingSlope)
-                    {
-                        velocity.x = velocity.y / Mathf.Tan(collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Sign(velocity.x);
-                    }
-
-                    collisions.below = true;
+                    velocity.x = velocity.y / Mathf.Tan(collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Sign(velocity.x);
                 }
+
+                collisions.below = true;
             }
         }
+        
 
         if (collisions.climbingSlope)
         {
@@ -188,7 +187,7 @@ public class Controller2D : RaycastController
             DescendSlope(ref velocity);
         }
 
-        if (velocity.x != 0 && !collisions.jumping)
+        if (velocity.x != 0)
         {
             HorizontalCollisions(ref velocity);
         }

@@ -1,3 +1,4 @@
+using lvl_0;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -59,7 +60,7 @@ public class PlayerController : MonoBehaviour
         m_spriteRenderer = GetComponent<SpriteRenderer>();
         controller = GetComponent<Controller2D>();
 
-        m_isFacingLeft = true;
+        m_isFacingLeft = false;
         m_isMoving = false;
 
         m_gravity = -(2 * m_jumpHeight) / (m_timeToJumpApex * m_timeToJumpApex);
@@ -68,15 +69,20 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        m_moveInput = m_inputActions.Game.Move.ReadValue<Vector2>();
-        UpdateMovement();
-        UpdateAnimator();
+        if (GameManager.Instance.GameIsRunning)
+        {
+            m_moveInput = m_inputActions.Game.Move.ReadValue<Vector2>();
+            UpdateMovement();
+            UpdateAnimator();
+        }
     }
 
     private void OnEnable()
     {
         m_inputActions.Game.Enable();
         m_inputActions.Game.Jump.performed += OnJump;
+        m_inputActions.Game.Pause.performed += OnPause;
+        m_inputActions.Game.Escape.performed += OnEscape;
     }
 
     private void OnDisable()
@@ -159,5 +165,15 @@ public class PlayerController : MonoBehaviour
             controller.Move(m_velocity * Time.deltaTime);
             controller.collisions.jumping = true;
         }
+    }
+
+    private void OnPause(CallbackContext context)
+    {
+        GameManager.Instance.Pause();
+    }
+
+    private void OnEscape(CallbackContext context)
+    {
+        GameManager.Instance.Escape();
     }
 }
