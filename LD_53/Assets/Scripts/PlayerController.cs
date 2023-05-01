@@ -51,7 +51,6 @@ public class PlayerController : MonoBehaviour
     private Vector3 m_velocity;
     private float m_velocityXSmoothing;
 
-
     private void Awake()
     {
         m_inputActions = new InputActions();
@@ -164,6 +163,7 @@ public class PlayerController : MonoBehaviour
             m_velocity.y = m_jumpVelocity;
             controller.Move(m_velocity * Time.deltaTime);
             controller.collisions.jumping = true;
+            GameManager.Instance.PlaySfx(Sfx.Jump);
         }
     }
 

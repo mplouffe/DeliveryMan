@@ -21,6 +21,8 @@ public class Controller2D : RaycastController
 
     protected RaycastHit2D[] raycastResults;
 
+    private float m_totalDistance;
+
     public float FeetPosition
     {
         get
@@ -197,7 +199,13 @@ public class Controller2D : RaycastController
             VerticalCollisions(ref velocity);
         }
 
+        m_totalDistance += Vector3.Distance(transform.position, transform.position + velocity);
         transform.Translate(velocity);
+    }
+
+    public float GetTotalDistance()
+    {
+        return m_totalDistance;
     }
 
     public struct CollisionInfo

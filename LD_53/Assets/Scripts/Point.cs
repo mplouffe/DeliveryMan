@@ -20,9 +20,18 @@ public class Point : MonoBehaviour
     private PointState m_pointState;
     private PlayerSide m_currentPlayerSide;
 
+    private float m_scoreMultiplier = 0.1f;
+
+    private float m_timeAdded;
+
     public void Awake()
     {
         gameObject.SetActive(false);
+    }
+
+    public void SetDistance(float distance)
+    {
+        m_timeAdded = distance;
     }
 
     public Point PointReached()
@@ -32,11 +41,20 @@ public class Point : MonoBehaviour
         Point nextPoint = m_nextTargetPointsList[randomIndex];
         PointState targetState = m_pointState == PointState.Pickup ? PointState.Delivery : PointState.Pickup;
         nextPoint.ActivatePoint(targetState);
+        var distance = Vector3.Distance(transform.position, nextPoint.transform.position);
+        nextPoint.SetDistance(distance/2);
 
         if (m_pointState == PointState.Delivery)
         {
-            PointsManager.Instance.AddPoints(10);
-            Clock.Instance.AddTimeToClock(10);
+            var score = 10 + (10 * m_scoreMultiplier);
+            m_scoreMultiplier += 0.1f;
+            PointsManager.Instance.AddPoints((int)score);
+            Clock.Instance.AddTimeToClock(m_timeAdded);
+            GameManager.Instance.PlaySfx(Sfx.Delivery);
+        }
+        else
+        {
+            GameManager.Instance.PlaySfx(Sfx.Pickup);
         }
 
         gameObject.SetActive(false);

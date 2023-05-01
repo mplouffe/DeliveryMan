@@ -30,6 +30,33 @@ namespace lvl_0
         [SerializeField]
         private float m_scoreDisplayWaitDuration;
 
+        [SerializeField]
+        private AudioSource m_sfxSource;
+
+        [SerializeField]
+        private AudioSource m_introTheme;
+
+        [SerializeField]
+        private AudioSource m_levelTheme;
+
+        [SerializeField]
+        private AudioSource m_readyTheme;
+
+        [SerializeField]
+        private AudioSource m_gameOverTheme;
+
+        [SerializeField]
+        private AudioSource m_scoreTheme;
+
+        [SerializeField]
+        private AudioClip m_jumpSfx;
+
+        [SerializeField]
+        private AudioClip m_pickupSfx;
+
+        [SerializeField]
+        private AudioClip m_deliverySfx;
+
         private DeliveryController m_currentPlayer;
 
         public GameState m_gameState;
@@ -147,14 +174,20 @@ namespace lvl_0
                 case GameState.GameOver:
                     m_gameOverDuration.Reset();
                     PopupsManager.Instance.GameOver(true);
+                    m_levelTheme.Stop();
+                    m_gameOverTheme.Play();
+                    var controller2D = m_currentPlayer.GetComponent<Controller2D>();
+                    m_playerDistance = (int)controller2D.GetTotalDistance();
                     break;
                 case GameState.Paused:
                     PopupsManager.Instance.Pause(true);
                     Clock.Instance.StopClock();
+                    m_levelTheme.Pause();
                     break;
                 case GameState.Escaped:
                     PopupsManager.Instance.Escaped(true);
                     Clock.Instance.StopClock();
+                    m_levelTheme.Pause();
                     break;
                 case GameState.GameRunning:
                     switch (m_gameState)
@@ -162,31 +195,49 @@ namespace lvl_0
                         case GameState.Paused:
                             PopupsManager.Instance.Pause(false);
                             Clock.Instance.StartClock();
+                            m_levelTheme.UnPause();
                             break;
                         case GameState.GameStart:
                             PopupsManager.Instance.GetReady(false);
                             Clock.Instance.StartClock();
                             Point startingPoint = DeliveryPointsManager.Instance.GetRandomStartingPoint();
                             m_currentPlayer.SetTarget(startingPoint);
+                            m_readyTheme.Stop();
+                            m_levelTheme.Play();
                             break;
                         case GameState.Escaped:
                             PopupsManager.Instance.Escaped(false);
                             Clock.Instance.StartClock();
+                            m_levelTheme.UnPause();
                             break;
                     }
                     break;
                 case GameState.GameStart:
+                    if (m_gameState == GameState.Menu)
+                    {
+                        m_introTheme.Stop();
+                    }
+                    m_playerDistance = 0;
+                    m_playerScore = 0;
                     m_gameStartDuration.Reset();
                     StartLevel();
                     PopupsManager.Instance.GetReady(true);
                     Clock.Instance.OnClockElapsed += OnClockElapsed;
+                    m_readyTheme.Play();
                     break;
                 case GameState.DisplayingScore:
+                    m_gameOverTheme.Stop();
+                    m_scoreTheme.Play();
                     SceneManager.LoadScene(3);
                     m_scoreDisplayDuration.Reset();
                     break;
                 case GameState.Menu:
                     SceneManager.LoadScene(0);
+                    if (m_gameState != GameState.Instructions)
+                    {
+                        m_scoreTheme.Stop();
+                        m_introTheme.Play();
+                    }
                     break;
             }
             m_gameState = newState;
@@ -222,6 +273,32 @@ namespace lvl_0
         {
             return targetX < m_currentPlayer.transform.position.x ? PlayerSide.Right : PlayerSide.Left;
         }
+
+        public void PlaySfx(Sfx effectToPlay)
+        {
+            switch (effectToPlay)
+            {
+                case Sfx.Jump:
+                    m_sfxSource.PlayOneShot(m_jumpSfx);
+                    break;
+                case Sfx.Pickup:
+                    m_sfxSource.PlayOneShot(m_pickupSfx);
+                    break;
+                case Sfx.Delivery:
+                    m_sfxSource.PlayOneShot(m_deliverySfx);
+                    break;
+            }
+        }
+
+        public int GetPlayerScore()
+        {
+            return m_playerScore;
+        }
+
+        public int GetPlayerDistance()
+        {
+            return m_playerDistance;
+        }
     }
 
     public enum GameState
@@ -234,5 +311,12 @@ namespace lvl_0
         DisplayingScore,
         Menu,
         Instructions
+    }
+
+    public enum Sfx
+    {
+        Jump,
+        Pickup,
+        Delivery
     }
 }
